@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="theme-color" content="#070b16"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>RoxyScore</title>
+  <link rel="stylesheet" href="shared.css"/>
+  <link rel="stylesheet" href="home.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="manifest" href="manifest.json"/>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="logo-mark">A<span>S</span></div>
+    <div class="topbar-center">
+      <span class="topbar-title">RoxyScore</span>
+      <span class="version-badge">v0.4</span>
+    </div>
+    <button class="icon-btn" id="notif-btn">
+      <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+      <span class="notif-dot hidden" id="notif-dot"></span>
+    </button>
+  </header>
+
+  <!-- DATE STRIP -->
+  <div class="date-strip-wrap">
+    <div class="date-strip" id="date-strip"></div>
+  </div>
+
+  <!-- FILTER PILLS -->
+  <div class="filter-pills">
+    <button class="pill active" data-filter="all">Tümü</button>
+    <button class="pill" data-filter="live">
+      <span class="live-dot-pill"></span>Canlı
+    </button>
+    <button class="pill" data-filter="finished">Bitti</button>
+    <button class="pill" data-filter="upcoming">Yakında</button>
+  </div>
+
+  <!-- FAV MATCH STRIP (dinamik, JS render) -->
+  <div id="fav-strip-container"></div>
+
+  <!-- MATCH LIST -->
+  <main class="match-list" id="match-list"></main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn" id="nav-menu">
+      <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+      <span>Menüler</span>
+    </button>
+    <button class="nav-btn" id="nav-search">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <span>Arama</span>
+    </button>
+    <button class="nav-center" id="nav-home">
+      <div class="nav-center-inner">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      </div>
+      <span>Ana Sayfa</span>
+    </button>
+    <button class="nav-btn" id="nav-table">
+      <svg viewBox="0 0 24 24"><path d="M3 3h18v2H3zm0 4h18v2H3zm0 4h18v2H3zm0 4h18v2H3zm0 4h18v2H3z"/></svg>
+      <span>Puan Tab.</span>
+    </button>
+    <button class="nav-btn" id="nav-fav">
+      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+      <span>Favoriler</span>
+    </button>
+  </nav>
+
+  <!-- DRAWER -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <div class="drawer-logo"><span class="logo-main">Roxy</span><span class="logo-accent">Score</span></div>
+      <button class="drawer-close" id="drawer-close">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div class="drawer-user">
+      <div class="drawer-avatar" id="drawer-avatar">A</div>
+      <div>
+        <div class="drawer-email" id="drawer-email">—</div>
+        <div class="drawer-badge">Üye · v0.4</div>
+      </div>
+    </div>
+    <div class="drawer-divider"></div>
+    <nav class="drawer-nav">
+      <button class="drawer-item active" onclick="closeDrawer()">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Ana Sayfa
+      </button>
+      <button class="drawer-item" onclick="goTo('favorites.html')">
+        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>Favorilerim
+      </button>
+      <button class="drawer-item" onclick="goTo('table.html')">
+        <svg viewBox="0 0 24 24"><path d="M3 3h18v2H3zm0 4h18v2H3zm0 4h18v2H3zm0 4h18v2H3zm0 4h18v2H3z"/></svg>Puan Tablosu
+      </button>
+      <button class="drawer-item" onclick="goTo('support.html')">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>Destek
+      </button>
+    </nav>
+    <div class="drawer-divider"></div>
+    <button class="drawer-item logout" id="drawer-logout">
+      <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>Çıkış Yap
+    </button>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-overlay hidden" id="search-overlay">
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <input type="text" id="search-input" placeholder="Takım, lig veya oyuncu ara..." autocomplete="off"/>
+        <button id="search-close"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+      </div>
+      <div class="search-results" id="search-results">
+        <div class="search-hint">Aramak istediğin takım veya ligi yaz...</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="config.js"></script>
+  <script src="api.js"></script>
+  <script src="data.js"></script>
+  <script src="shared.js"></script>
+  <script src="home.js"></script>
+</body>
+</html>
